@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Admin Page</title></head>
+<body>
+<form id="admin-form" action="#" th:action="@{/admin/addMovies}" th:object="${user}" method="post" class="form-horizontal">
+<table>
+<tr>
+<td></td><td></td>
+<td><input type="submit" value="Add Movies"></input></td> <td><input type="button" value="Add Movie" onclick="showMovieDetails();"></input></td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+</form>
+
+<div class="searchMovie" id="searchMovie">
+<form id="movie-details-form" action="#" th:action="@{/admin/editMovie}" th:object="${movie}" method="post" class="form-horizontal">
+	Movie Name: <div class="ui-widget">
+				<input type="text" list="movieNames" id="movieName" name="movieName" onkeyup="getMovieNames();" />
+				<datalist id="movieNames"></datalist>
+	 			&nbsp;&nbsp;&nbsp;<input type="button" name="searchMo" value="Search" onclick="searchMovie();"/></div>
+	 			
+	 			<div class="editMovieInfo">
+	 			
+	 			
+	 				<input type="submit" name="editMovie" id="editMovive"/>
+	 			</div>
+	 			
+</form>
+</div>
+<div class="MovieDetails" id="movieDetails" style="display: none;">
+<form id="movie-details-form" action="#" th:action="@{/admin/addMovie}" th:object="${movie}" method="post" class="form-horizontal">
+<table>
+<tr>
+<td><label for="imdbID">ImDB ID: </label></td>
+<td><input type="text" name="imdbID"/></td>
+</tr>
+<tr>
+<td><label for="title">Movie Title: </label></td>
+<td><input type="text" name="title"/></td>
+</tr>
+<tr>
+<td><label for="year">Year: </label></td>
+<td><input type="text" name="year"/></td>
+</tr>
+<tr>
+<td><label for="rated">Rated: </label></td>
+<td><input type="text" name="rated"/></td>
+</tr>
+<tr>
+<td><label for="released">Released: </label></td>
+<td><input type="text" name="released"/></td>
+</tr>
+<tr>
+<td><label for="runTime">Run Time: </label></td>
+<td><input type="text" name="runTime"/></td>
+</tr>
+<tr>
+<td><label for="genre">Genre: </label></td>
+<td><input type="text" name="genre"/></td>
+</tr>
+<tr>
+<td><label for="director">Director: </label></td>
+<td><input type="text" name="director"/></td>
+</tr>
+<tr>
+<td><label for="writer">Writer: </label></td>
+<td><input type="text" name="writer"/></td>
+</tr>
+<tr>
+<td><label for="actors">Actors: </label></td>
+<td><input type="text" name="actors"/></td>
+</tr>
+<tr>
+<td><label for="plot">Plot: </label></td>
+<td><input type="text" name="plot"/></td>
+</tr>
+<tr>
+<td><label for="language">Language: </label></td>
+<td><input type="text" name="language"/></td>
+</tr>
+<tr>
+<td><label for="country">Country: </label></td>
+<td><input type="text" name="country"/></td>
+</tr>
+<tr>
+<td><label for="awards">Awards: </label></td>
+<td><input type="text" name="awards"/></td>
+</tr>
+<tr>
+<td><label for="poster">Poster: </label></td>
+<td><input type="text" name="poster"/></td>
+</tr>
+<tr>
+<td><label for="metaScore">MetaScore: </label></td>
+<td><input type="text" name="metaScore"/></td>
+</tr>
+<tr>
+<td><label for="imdbRating">ImDB Rating: </label></td>
+<td><input type="text" name="imdbRating"/></td>
+</tr>
+<tr>
+<td><label for="imdbVotes">Imdb Votes: </label></td>
+<td><input type="text" name="imdbVotes"/></td>
+</tr>
+<tr>
+<td><label for="type">Type: </label></td>
+<td><input type="text" name="type"/></td>
+</tr>
+<tr></tr>
+<tr></tr>
+<tr><td><input type="submit" id="addMovie" value="Add Movie Details"/></td></tr>
+</table>
+</form>
+</div>
+</body>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCJnj2nWoM86eU8Bq2G4lSNz3udIkZT4YY&sensor=true"></script> -->
+<script type="text/javascript">
+function showMovieDetails(){
+	var x = document.getElementById("movieDetails");
+	if (x.style.display === "none") {
+	    x.style.display = "block";
+	} else {
+	    x.style.display = "none";
+	}
+}
+
+function searchMovie() {
+    var movieData = {}
+    movieData["movieName"] = $("#movieName").val();
+    $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: "/admin/getMovieInfo",
+        data: JSON.stringify(movieData),
+        dataType: 'json',
+        cache: false,
+        timeout: 600000,
+        success: function (data) {
+            var json =JSON.stringify(data, null, 4);
+            var jsonObj = JSON.parse(json);
+            var obj = jsonObj.Title;
+            alert(obj);
+            console.log("SUCCESS : ", data);
+
+        },
+        error: function (e) {
+        	 var json =JSON.stringify(e.responseText, null, 4);
+             var jsonObj = JSON.parse(json);
+             var jsOb = JSON.parse(jsonObj);
+            console.log("ERROR : ", e);
+            //$("#btn-search").prop("disabled", false);
+
+        }
+    });
+}
+
+function getMovieNames() {
+    var movieData = {}
+    movieData["movieName"] = $("#movieName").val();
+   
+    $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: "/admin/getMovieNames",
+        data: JSON.stringify(movieData),
+        dataType: 'json',
+        cache: false,
+        timeout: 600000,
+        success: function (data) {
+            var json =JSON.stringify(data, null, 4);
+            var jsonObj = JSON.parse(json);
+            var obj = jsonObj.movieNames;
+          
+            var options = '';
+
+            for(var i = 0; i < obj.length; i++)
+              options += '<option value="'+obj[i]+'" />';
+            document.getElementById('movieNames').innerHTML = options;
+            console.log("SUCCESS : ", data);
+
+        },
+        error: function (e) {
+        	 var json =JSON.stringify(e.responseText, null, 4);
+             var jsonObj = JSON.parse(json);
+             var jsOb = JSON.parse(jsonObj);
+            $("#movieName").text(jsOb.movieName);
+            console.log("ERROR : ", e);
+            //$("#btn-search").prop("disabled", false);
+
+        }
+    });
+
+}
+
+</script>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>User Page</title></head>
+<body>
+<form id="customer-form" action="#" th:action="@{/user}" th:object="${movies}" method="post" class="form-horizontal">
+<h5>IMDb Movie Charts</h5>
+<h2><span th:text="${movie.title}"></span>(<span th:text="${movie.year}"></span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span th:text="${movie.imdbRating}"></span></h2>
+<div id="hiddenInfo"  style="display:none"><span th:text="${movie.title}"></span></div>
+<div id="hiddenInfo1"  style="display:none"><span th:text="${movie.imdbID}"></span></div>
+<div id ="captions"><span th:text="${movie.rated}"></span> | <span th:text="${movie.runTime}"></span> | <span th:text="${movie.genre}"></span> | <span th:text="${movie.released}"></span> </div>
+<br><div id="image">
+ <img th:src="@{${movie.poster}}"/>     
+</div>
+<div id="plot">
+	<span><b>Story line:</b></span><p th:text="${movie.plot}"></p><br>
+	<span>Director:&nbsp;&nbsp;</span> <span th:text="${movie.director}"></span><br>
+	<span>Writers:&nbsp;&nbsp;</span> <span th:text="${movie.writer}"></span><br>
+	<span>Actors:&nbsp;&nbsp;</span> <span th:text="${movie.actors}"></span><br>
+	<span>Awards:&nbsp;&nbsp;</span> <span th:text="${movie.awards}"></span><br>
+</div>
+<div id="details">
+<h3>Details</h3>
+<span>Country: </span><span th:text="${movie.country}"></span><br>
+<span>Language: </span><span th:text="${movie.language}"></span><br>
+<span>Released Date: </span><span th:text="${movie.released}"></span><br>
+<span>Runtime: </span><span th:text="${movie.runTime}"></span><br>
+<span>Genre: </span><span th:text="${movie.genre}"></span><br>
+</div>
+<div id="metaSection">
+<h3>Meta score</h3>
+<span>Meta score: </span><span th:text="${movie.metaScore}"></span>&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp; <span>Reviews: </span><span th:text="${movie.metaScore}"></span><br>
+</div>
+<div id="reviewSection" style="diplay:none">
+<h3>User Reviews</h3>
+	<div th:if="${not #lists.isEmpty(movie.reviews)}">
+		<table>
+			<tr th:each="review : ${movie.reviews}">
+				<td><div id="reviewcontent">
+							<b><span th:text="${review.reviewTitle}"></span> | <span th:text="${review.rating}"></span></b><br>
+							<span th:text="${review.reviewDate}"></span> | <span th:text="${review.reviewedBy}"></span> 	<br>
+							<p th:text="${review.review}"></p>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div id="reviews">
+	<input type="button" id="Review" value="Write Review" onclick="showReviewDetails();"/>
+	<span id="message"></span>
+	<div id="writeReview" style="display:none">
+		Rating: <input type="text" name="reviewRating" id="reviewRating"/><br>
+		Review Title: <input type="text" name="reviewTitle" id="reviewTitle"/><br>
+		Review Content: <input type="text" name="reviewContent" id="reviewContent"/><br>
+		<input type="button" id="write" value="Submit" onclick="writeReview();"/>
+	</div>
+</div>
+
+</form>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCJnj2nWoM86eU8Bq2G4lSNz3udIkZT4YY&sensor=true"></script>
+</body>
+<script type="text/javascript">
+$(document).ready(function () {
+});
+
+function showReviewDetails(){
+	var x = document.getElementById("writeReview");
+	if (x.style.display === "none") {
+	    x.style.display = "block";
+	} else {
+	    x.style.display = "none";
+	}
+}
+
+function writeReview() {
+    var reviewData = {}
+    reviewData["title"] = $('#hiddenInfo span').text();
+    reviewData["imdbID"] = $('#hiddenInfo1 span').text();
+    reviewData["rating"] = $("#reviewRating").val();
+    reviewData["reviewTitle"] = $("#reviewTitle").val();
+    reviewData["review"] = $("#reviewContent").val();
+    $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: "/user/writeReview",
+        data: JSON.stringify(reviewData),
+        dataType: 'json',
+        cache: false,
+        timeout: 600000,
+        success: function (data) {
+            var json =JSON.stringify(data, null, 4);
+            var jsonObj = JSON.parse(json);
+            	$("#message").text(jsonObj.msg);
+            console.log("SUCCESS : ", data);
+
+        },
+        error: function (e) {
+        	 var json =JSON.stringify(e.responseText, null, 4);
+             var jsonObj = JSON.parse(json);
+             var jsOb = JSON.parse(jsonObj);
+            $("#message").text(jsOb.msg);
+            console.log("ERROR : ", e);
+            //$("#btn-search").prop("disabled", false);
+
+        }
+    });
+
+}
+
+</script>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>User Page</title></head>
+<body>
+<form id="customer-form" action="#" th:action="@{/login}" th:object="${user}" method="post" class="form-horizontal">
+<div th:if="${#fields.hasErrors('*')}">errors</div>
+<table>
+<tr>
+<td><label for="user-name">User Name or Email:</label></td>
+<td><input type="text" th:field="*{userName}"/></td>
+</tr>
+<tr>
+<td><label for="password">Password:</label></td>
+<td><input type="password" name="password"/></td>
+</tr>
+<tr>
+<td></td><td></td>
+<td><input type="submit" value="Login"></input></td><td><a href="register">Register Here !!</a></td>
+</tr>
+
+</table>
+
+</form>
+</body>
+</html>

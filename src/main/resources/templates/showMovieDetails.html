@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>User Page</title></head>
+<body>
+<form id="customer-form" action="#" th:action="@{/user}" th:object="${movies}" method="post" class="form-horizontal">
+<h5>IMDb Movie Charts</h5>
+<h4>Top Rated Movies.</h4>
+
+<div class="container">
+	<div th:if="${not #lists.isEmpty(movies)}">
+		<table>
+			<tr>
+				<th>Rank and Title</th>
+				<th>IMDb Rating</th>
+				<th>IMDb Votes</th>
+			</tr>
+
+			<tr th:each="movie : ${movies}">
+				<td><a th:href="@{/user/movieDetails(title=${movie.imdbID})}"><span th:text="${movie.title}"></span></a></td>
+				<td th:text="${movie.imdbRating}"></td>
+				<td th:text="${movie.imdbVotes}"></td>
+			</tr>
+
+			<tr>
+				<td></td><td></td>
+			</tr>
+
+		</table>
+	
+	</div>
+</div>
+
+</form>
+</body>
+</html>
